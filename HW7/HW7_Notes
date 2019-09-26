@@ -1,0 +1,2 @@
+Use zipf's rule of thumb to accept inliers.
+Number of points within 1.5x of current theta, should be half of inliers within current theta.

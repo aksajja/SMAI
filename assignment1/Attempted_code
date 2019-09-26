@@ -1,0 +1,136 @@
+1.3.2 -- Q1
+
+# Experimental validation here.
+# Multiply your data (train_data) with an orthonormal matrix and plot the
+# eigen value specturm of the new covariance matrix.
+
+
+### Generate the orthonormal matrix in numpy.
+from scipy.stats import ortho_group
+
+ortho_matrix = ortho_group.rvs(784)
+transformed_data = train_data.dot(ortho_matrix)
+
+
+mean = np.mean(transformed_data, axis=0)
+mean = mean.reshape(1,784)
+transformed_data = transformed_data - mean
+cov_mat = ((transformed_data.T).dot(transformed_data))
+
+eigenvectors, eigenvalues, V = np.linalg.svd(cov_mat, full_matrices=False)
+eigenvalues = eigenvalues.reshape(eigenvalues.shape[0],1)
+norm_constant = math.sqrt(np.sum((eigenvalues.T).dot(eigenvalues)))
+
+norm_eigvalues = [i/norm_constant for i in eigenvalues]
+X_axis = np.linspace(1,100, 100)
+fig = plt.figure()
+two_plots = fig.add_subplot(121)
+two_plots.plot(X_axis, norm_eigvalues[0:100], color = 'black')
+
+
+ortho_vector = ortho_matrix[0:2].reshape([784,2])
+rankless_matrix = ortho_vector.dot(ortho_vector.T)
+# print(rankless_matrix.shape, ortho_matrix[0].shape)
+# print(np.linalg.matrix_rank(rankless_matrix))
+
+transformed_rankless_data = train_data.dot(rankless_matrix)
+mean = np.mean(transformed_rankless_data, axis=0)
+mean = mean.reshape(1,784)
+transformed_rankless_data = transformed_rankless_data - mean
+cov_mat = ((transformed_rankless_data.T).dot(transformed_rankless_data))
+
+eigenvectors, eigenvalues, V = np.linalg.svd(cov_mat, full_matrices=False)
+eigenvalues = eigenvalues.reshape(eigenvalues.shape[0],1)
+norm_constant = math.sqrt(np.sum((eigenvalues.T).dot(eigenvalues)))
+
+norm_eigvalues = [i/norm_constant for i in eigenvalues]
+X_axis = np.linspace(1,2, 2)
+fig = plt.figure()
+two_plots = fig.add_subplot(122)
+two_plots.scatter(X_axis, norm_eigvalues[0:2], color = 'black')
+
+
+plt.show()
+
+1.3.3
+
+
+temp_train_data = train_data
+mean = np.mean(temp_train_data, axis=0)
+mean = mean.reshape(1,784)
+temp_train_data = temp_train_data - mean
+cov_mat = ((temp_train_data.T).dot(temp_train_data))
+
+eigenvectors, eigenvalues, V = np.linalg.svd(cov_mat, full_matrices=False)
+cov_mat_rank = np.linalg.matrix_rank(cov_mat)
+print("Rank of covariance matrix : ", cov_mat_rank)
+
+zero_vec = np.zeros([1,784])
+count = 0
+full_rank_cov_mat = np.empty([0,784])
+non_zero_eigenvalues = np.empty([0])
+# Reducing the p eigenvectors of dim p, to k eigen.Vecs of dim p.
+for i in range(784):
+    # We take 1 as eigen-values very close to 0 need to be ignored. The rank is also satisfied when we take this condition.
+    if eigenvalues[i]>1:
+        non_zero_eigenvalues = np.append(non_zero_eigenvalues,eigenvalues[i])
+        full_rank_cov_mat = np.append(full_rank_cov_mat,eigenvectors[i].reshape(1,784),axis=0)
+
+print(non_zero_eigenvalues.shape)
+print("Number of eigenvectors : ", full_rank_cov_mat.shape[0], " ; Dimension: ", full_rank_cov_mat.shape[1])
+mean = mean.reshape(784,)
+
+# V = E (D) E.T
+D = np.diag(non_zero_eigenvalues)
+print(D.shape,
+np.nonzero(D[0]),
+np.nonzero(D[1]))
+V = full_rank_cov_mat.T.dot(D.dot(full_rank_cov_mat))
+
+for _test_row in test_data:
+    pd = pdf_singular_case(_test_row,mean,V,cov_mat_rank,D)
+
+# Fitting Multivariate Gaussian
+# from scipy.stats import multivariate_normal
+# fitted_curve = multivariate_normal.pdf(train_data, mean=mean, cov=cov_mat)
+
+
+
+
+In Maximum likelihood estimation(MLE) we are calculating likelihood Prob(w_i|x) of each class. Multiplying test sample with each class likelihood probability. From that finding out the maximum likelihood class.
+
+In Maximum a posteriori(MAP) estimation calculating the likelihood probability P(w_i|x) and posteriori probability P(w_i) for each class. but posteriori probability for each class is same so here MLE == MAP.
+
+In Bayesian pairwise majority voting method calculating the average coveraince matrix of two classes, like that for each two classes calculating coveriance matrices of 10C2 = 45 combinations. Because of this 45 combinations each class MAP is compared with remaining all classes. This is the better method in all these.
+
+In Simple Perpendicular Bisector majority voting method, first finding the mean by using the perpendicular bisector of line joining means for class i and j. Repeating this for all 45 combination of classes.
+
+
+
+nearest_k
+
+
+def find_nearest_k(train_data, test_row,k):
+    nearest_indices = []
+    min_dists = []
+    
+    for train_index in range(len(train_data)):
+        dist = np.linalg.norm(train_data[train_index]-test_row)
+        if len(min_dists)<k or dist<max(min_dists):
+            min_dists.append(dist)
+            nearest_indices.append(train_index)
+    
+    # Return mode of NN list
+    return nearest_indices
+
+accuracy_count = 0
+for test_index in range(len(test_data)):
+    nearest_indices = find_nearest_k(train_data, test_data[test_index],k=1)
+    nearest_labels = []
+    for index in nearest_indices:
+        nearest_labels.append(train_labels[index])
+    nearest_label = max(set(nearest_labels),key=nearest_labels.count)
+    if nearest_label==test_labels[test_index]:
+        accuracy_count += 1
+        
+print(" Accuracy is : ", accuracy_count/len(test_data))
