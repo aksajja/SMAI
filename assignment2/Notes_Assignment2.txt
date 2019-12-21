@@ -1,0 +1,8 @@
+
+Google to understand how many eigen values need to be picked.
+
+The variances in the direction of the eigenvectors are their eigenvalues. Hence, the proportionality gives relative importance.
+How many eigenvectors should we choose to project our data on? A rule of thumb is to choose the first n eigenvectors such that the sum of their variances (eigenvalues) is larger than 95% of the total.
+
+Understand legends
+	Set name of person in legend of scatter plots.

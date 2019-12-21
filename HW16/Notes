@@ -1,0 +1,33 @@
+
+LDA to K-LDA
+
+https://en.wikipedia.org/wiki/Kernel_Fisher_discriminant_analysis - Has COMPLETE derivation
+http://www.sci.utah.edu/~shireen/pdfs/tutorials/Elhabian_LDA09.pdf
+https://sebastianraschka.com/Articles/2014_python_lda.html#step-4-selecting-linear-discriminants-for-the-new-feature-subspace
+
+Difference with PCA is that LDA is supervised. Considers class means to compute cov mat.
+LDA's objective is to transform the given data into a space of high marginal distance.
+	We find the eigen vecs to achieve the same.
+
+K-LDA finds these eigen vecs in another way.
+	Before we arrive at the eigen vecs, we need to explode the dimensions. 
+	Find the eigen vecs in this space.
+	These exploded dimensions will enable finding non-linear mappings to a new vector space.
+	This enables finding curves for 'linearly non-separable' data.
+
+Multi-class LDA is a generalization of the 2-class LDA.
+	https://stats.stackexchange.com/questions/30075/multi-class-lda-vs-2-class-lda
+
+
+3) http://www.nathanielhobbs.com/documents/cvx_opt/cvx_opt_final_report.pdf 
+
+
+I believe neural nets just store information better.
+Compressed version of training data.
+It is a lookup table.
+Tolerances/thresholds decide which label to allot.
+
+Can I prove this?
+
+High variance in output based on small change in parameter means it is important else NOT.
+This exponential nature of a param. Can it be expressed in polynomial terms.

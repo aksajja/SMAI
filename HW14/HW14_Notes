@@ -1,0 +1,32 @@
+A1
+
+Handwritten -
+From the graph we can directly indicate the SVs.
+
+Coef(w) and intercept(b)
+
+alpha(i) is non-zero for SVs.
+
+
+A2
+
+2 classes of 1D from gaussain distributions.
+y is {+1,-1}
+
+Linear regression is convex, show convergence on plot.
+Log_reg is non-convex, show NON-convergence.
+
+1) Do either of them assume linear separability?
+	Linear regression does assume.
+	Logistic does NOT.
+
+2) For regression, it should not matter if y is {+1,-1}
+
+A3
+
+How does accuracy change with C?
+To check how the decision boundary changes (SVs change) as the softness (C, i.e., tolerance) is varied.
+
+Find top-2 eigen vectors and plot on 2D for a given C.
+
+Indicate the SVs in the above plot.
